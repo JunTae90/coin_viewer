@@ -68,7 +68,11 @@ class MainWindow(QtWidgets.QMainWindow):
                     if i in self.upbit_dict.keys():
                         calculated_dict['upbit'] = self.upbit_dict[i]
                         calculated_dict['upbit_premium'] = round(((float(self.upbit_dict[i]['price'])-float(self.binance_dict[i]['price']))/float(self.binance_dict[i]['price']))*100, 2)
-                        calculated_dict['main_premium'] = calculated_dict['upbit_premium']
+                        if 'bithumb_premium' in calculated_dict.keys():
+                            if abs(calculated_dict['upbit_premium']) > abs(calculated_dict['bithumb_premium']):
+                                calculated_dict['main_premium'] = calculated_dict['upbit_premium']
+                        else:
+                            calculated_dict['main_premium'] = calculated_dict['upbit_premium']
                     fusion_list.append(calculated_dict)
             if len(fusion_list) > 0:
                 fusion_list.sort(key=itemgetter('main_premium'))
