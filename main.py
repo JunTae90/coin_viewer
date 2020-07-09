@@ -63,6 +63,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 cnt = 1
                 for i in fusion_list:
                     getattr(self.ui, 'coin_{}'.format(cnt)).setText(i['symbol'])
+                    
                     if 'binance' in i.keys():
                         binance_data = i['binance']
                         getattr(self.ui, 'price_binance_coin_{}'.format(cnt)).setText(binance_data['price'])
