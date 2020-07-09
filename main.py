@@ -32,9 +32,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.fusion)
-        self.timer.start(1000)
+        self.timer.start()
 
         self.rank = dict()
+        self.rank_on = True
+        self.ui.pushButton.clicked.connect(self.rank_update)
+    
+    def rank_update(self):
+        if self.rank_on:
+            self.rank_on = False
+            self.ui.pushButton.setText('Start')
+        else:
+            self.rank_on = True
+            self.ui.pushButton.setText('Stop')
 
     def receive_binance(self, data):
         self.binance_dict = data
@@ -62,37 +72,43 @@ class MainWindow(QtWidgets.QMainWindow):
                     fusion_list.append(calculated_dict)
             if len(fusion_list) > 0:
                 fusion_list.sort(key=itemgetter('main_premium'))
-                cnt = 1
+                if self.rank_on:
+                    for i in range(len(fusion_list)):
+                        symbol = fusion_list[i]['symbol']
+                        rank = i+1
+                        self.rank[symbol] = rank
+
                 for i in fusion_list:
-                    getattr(self.ui, 'coin_{}'.format(cnt)).setText(i['symbol'])
+                    symbol = i['symbol']
+                    getattr(self.ui, 'coin_{}'.format(self.rank[symbol])).setText(symbol)
                     if 'binance' in i.keys():
                         binance_data = i['binance']
-                        getattr(self.ui, 'price_binance_coin_{}'.format(cnt)).setText(binance_data['price'])
-                        getattr(self.ui, 'ask_binance_coin_{}'.format(cnt)).setText(binance_data['ask'])
-                        getattr(self.ui, 'bid_binance_coin_{}'.format(cnt)).setText(binance_data['bid'])
+                        getattr(self.ui, 'price_binance_coin_{}'.format(self.rank[symbol])).setText(binance_data['price'])
+                        getattr(self.ui, 'ask_binance_coin_{}'.format(self.rank[symbol])).setText(binance_data['ask'])
+                        getattr(self.ui, 'bid_binance_coin_{}'.format(self.rank[symbol])).setText(binance_data['bid'])
                     else:
-                        getattr(self.ui, 'price_binance_coin_{}'.format(cnt)).setText('')
-                        getattr(self.ui, 'ask_binance_coin_{}'.format(cnt)).setText('')
-                        getattr(self.ui, 'bid_binance_coin_{}'.format(cnt)).setText('')
+                        getattr(self.ui, 'price_binance_coin_{}'.format(self.rank[symbol])).setText('')
+                        getattr(self.ui, 'ask_binance_coin_{}'.format(self.rank[symbol])).setText('')
+                        getattr(self.ui, 'bid_binance_coin_{}'.format(self.rank[symbol])).setText('')
                     if 'upbit' in i.keys():
                         upbit_data = i['upbit']
-                        getattr(self.ui, 'price_upbit_coin_{}'.format(cnt)).setText(upbit_data['price']+'/'+str(i['upbit_premium'])+'%')
-                        getattr(self.ui, 'ask_upbit_coin_{}'.format(cnt)).setText(upbit_data['ask'])
-                        getattr(self.ui, 'bid_upbit_coin_{}'.format(cnt)).setText(upbit_data['bid'])
+                        getattr(self.ui, 'price_upbit_coin_{}'.format(self.rank[symbol])).setText(upbit_data['price']+'/'+str(i['upbit_premium'])+'%')
+                        getattr(self.ui, 'ask_upbit_coin_{}'.format(self.rank[symbol])).setText(upbit_data['ask'])
+                        getattr(self.ui, 'bid_upbit_coin_{}'.format(self.rank[symbol])).setText(upbit_data['bid'])
                     else:
-                        getattr(self.ui, 'price_upbit_coin_{}'.format(cnt)).setText('')
-                        getattr(self.ui, 'ask_upbit_coin_{}'.format(cnt)).setText('')
-                        getattr(self.ui, 'bid_upbit_coin_{}'.format(cnt)).setText('')
+                        getattr(self.ui, 'price_upbit_coin_{}'.format(self.rank[symbol])).setText('')
+                        getattr(self.ui, 'ask_upbit_coin_{}'.format(self.rank[symbol])).setText('')
+                        getattr(self.ui, 'bid_upbit_coin_{}'.format(self.rank[symbol])).setText('')
                     if 'bithumb' in i.keys():
                         bithumb_data = i['bithumb']
-                        getattr(self.ui, 'price_bithumb_coin_{}'.format(cnt)).setText(bithumb_data['price']+'/'+str(i['bithumb_premium'])+'%')
-                        getattr(self.ui, 'ask_bithumb_coin_{}'.format(cnt)).setText(bithumb_data['ask'])
-                        getattr(self.ui, 'bid_bithumb_coin_{}'.format(cnt)).setText(bithumb_data['bid'])
+                        getattr(self.ui, 'price_bithumb_coin_{}'.format(self.rank[symbol])).setText(bithumb_data['price']+'/'+str(i['bithumb_premium'])+'%')
+                        getattr(self.ui, 'ask_bithumb_coin_{}'.format(self.rank[symbol])).setText(bithumb_data['ask'])
+                        getattr(self.ui, 'bid_bithumb_coin_{}'.format(self.rank[symbol])).setText(bithumb_data['bid'])
                     else:
-                        getattr(self.ui, 'price_bithumb_coin_{}'.format(cnt)).setText('')
-                        getattr(self.ui, 'ask_bithumb_coin_{}'.format(cnt)).setText('')
-                        getattr(self.ui, 'bid_bithumb_coin_{}'.format(cnt)).setText('')
-                    cnt += 1
+                        getattr(self.ui, 'price_bithumb_coin_{}'.format(self.rank[symbol])).setText('')
+                        getattr(self.ui, 'ask_bithumb_coin_{}'.format(self.rank[symbol])).setText('')
+                        getattr(self.ui, 'bid_bithumb_coin_{}'.format(self.rank[symbol])).setText('')
+
         except Exception as e:
             print(e)
             pass
