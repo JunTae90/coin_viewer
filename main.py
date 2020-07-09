@@ -68,16 +68,28 @@ class MainWindow(QtWidgets.QMainWindow):
                         getattr(self.ui, 'price_binance_coin_{}'.format(cnt)).setText(binance_data['price'])
                         getattr(self.ui, 'ask_binance_coin_{}'.format(cnt)).setText(binance_data['ask'])
                         getattr(self.ui, 'bid_binance_coin_{}'.format(cnt)).setText(binance_data['bid'])
+                    else:
+                        getattr(self.ui, 'price_binance_coin_{}'.format(cnt)).setText('')
+                        getattr(self.ui, 'ask_binance_coin_{}'.format(cnt)).setText('')
+                        getattr(self.ui, 'bid_binance_coin_{}'.format(cnt)).setText('')
                     if 'upbit' in i.keys():
                         upbit_data = i['upbit']
                         getattr(self.ui, 'price_upbit_coin_{}'.format(cnt)).setText(upbit_data['price']+'/'+str(i['upbit_premium'])+'%')
                         getattr(self.ui, 'ask_upbit_coin_{}'.format(cnt)).setText(upbit_data['ask'])
                         getattr(self.ui, 'bid_upbit_coin_{}'.format(cnt)).setText(upbit_data['bid'])
+                    else:
+                        getattr(self.ui, 'price_upbit_coin_{}'.format(cnt)).setText('')
+                        getattr(self.ui, 'ask_upbit_coin_{}'.format(cnt)).setText('')
+                        getattr(self.ui, 'bid_upbit_coin_{}'.format(cnt)).setText('')
                     if 'bithumb' in i.keys():
                         bithumb_data = i['bithumb']
                         getattr(self.ui, 'price_bithumb_coin_{}'.format(cnt)).setText(bithumb_data['price']+'/'+str(i['bithumb_premium'])+'%')
                         getattr(self.ui, 'ask_bithumb_coin_{}'.format(cnt)).setText(bithumb_data['ask'])
                         getattr(self.ui, 'bid_bithumb_coin_{}'.format(cnt)).setText(bithumb_data['bid'])
+                    else:
+                        getattr(self.ui, 'price_bithumb_coin_{}'.format(cnt)).setText('')
+                        getattr(self.ui, 'ask_bithumb_coin_{}'.format(cnt)).setText('')
+                        getattr(self.ui, 'bid_bithumb_coin_{}'.format(cnt)).setText('')
                     cnt += 1
         except Exception as e:
             print(e)
