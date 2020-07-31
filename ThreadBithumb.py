@@ -32,6 +32,7 @@ class bithumbThread(QThread):
             try:
                 bithumb_dict = dict()
                 symbol_list = self.get_symbol_list()
+                print(symbol_list)
                 prices = self.bithumb.get_current_price('ALL')
                 orderbooks = self.bithumb.get_orderbook('ALL')['data']
                 for i in symbol_list:
@@ -43,7 +44,6 @@ class bithumbThread(QThread):
                     bithumb_dict[i]['price'] = price
                     bithumb_dict[i]['ask'] = ask
                     bithumb_dict[i]['bid'] = bid
-
                 self.bithumb_data.emit(bithumb_dict)
             except Exception as e:
                 print(e)
