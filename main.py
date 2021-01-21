@@ -30,17 +30,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.upbit_dict = dict()
         self.bithumb_dict = dict()
 
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.get_duplicate_list)
-        self.timer.start(300000)
-
         self.rank = dict()
         self.rank_on = True
         self.ui.pushButton.clicked.connect(self.rank_update)
 
-        self.timer2 = QTimer()
-        self.timer2.timeout.connect(self.fusion)
-        self.timer2.start()
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.fusion)
+        self.timer.start()
 
     def rank_update(self):
         if self.rank_on:

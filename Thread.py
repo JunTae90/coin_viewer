@@ -29,6 +29,7 @@ class binanceThread(QThread):
             pass
         return binanceList
 
+
     def save_list(self, list):
         for i in list:
             if i == 'BTC':
