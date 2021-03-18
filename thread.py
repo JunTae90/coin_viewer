@@ -6,6 +6,7 @@ import pybithumb
 import requests
 from bs4 import BeautifulSoup
 
+
 class binanceThread(QThread):
     binance_data = pyqtSignal(dict)
     def __init__(self):

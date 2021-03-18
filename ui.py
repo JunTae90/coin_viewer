@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
+
 class CoinOrderBook(QWidget):
     def __init__(self, parent=None, top=False):
         QWidget.__init__(self, parent)
