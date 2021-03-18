@@ -14,6 +14,18 @@ class binanceThread(QThread):
         self.binance = Client()
         self.binanceList = list()
         self.exchange_rate = float(1100)
+        self.isRun = True
+
+    def delSymbol(self, symbol):
+        if symbol+"BTC" in self.binanceList:
+            self.binanceList.remove(symbol+"BTC")
+
+    def _start(self):
+        self.isRun = True
+        self.start()
+
+    def stop(self):
+        self.isRun = False
 
     def get_symbol_list(self):
         binanceList = list()
@@ -83,7 +95,7 @@ class binanceThread(QThread):
         return str(round(float(price) * BTCUSDT * exchange_rate, 2))
 
     def run(self):
-        while True:
+        while self.isRun:
             self.mutex.lock()
             binanceDict = dict()
             self.get_dollor()
@@ -130,6 +142,18 @@ class upbitThread(QThread):
         self.mutex = QMutex()
         self.upbit = pyupbit
         self.upbitList = list()
+        self.isRun = True
+
+    def delSymbol(self, symbol):
+        if "KRW-"+symbol in self.upbitList:
+            self.upbitList.remove("KRW-"+symbol)
+
+    def _start(self):
+        self.isRun = True
+        self.start()
+
+    def stop(self):
+        self.isRun = False
 
     def get_symbol_list(self):
         upbitList = list()
@@ -146,21 +170,25 @@ class upbitThread(QThread):
             self.upbitList.append('KRW-'+i)
 
     def run(self):
-        while True:
+        while self.isRun:
             self.mutex.lock()
             upbitDict = dict()
             prices = self.upbit.get_current_price(self.upbitList)
             orderbooks = self.upbit.get_orderbook(self.upbitList)
-            for i in orderbooks:
-                symbol = i['market'].split('-')[1]
-                orderbook = i['orderbook_units'][0]
-                ask = str(orderbook['ask_price']) + '/' + str(round(orderbook['ask_size'], 2))
-                bid = str(orderbook['bid_price']) + '/' + str(round(orderbook['bid_size'], 2))
-                upbitDict[symbol] = dict()
-                upbitDict[symbol]['price'] = str(round(prices[i['market']], 2))
-                upbitDict[symbol]['ask'] = ask
-                upbitDict[symbol]['bid'] = bid
-            self.upbit_data.emit(upbitDict)
+            if orderbooks and prices:
+                for i in orderbooks:
+                    try:
+                        symbol = i['market'].split('-')[1]
+                        orderbook = i['orderbook_units'][0]
+                        ask = str(orderbook['ask_price']) + '/' + str(round(orderbook['ask_size'], 2))
+                        bid = str(orderbook['bid_price']) + '/' + str(round(orderbook['bid_size'], 2))
+                        upbitDict[symbol] = dict()
+                        upbitDict[symbol]['price'] = str(round(prices[i['market']], 2))
+                        upbitDict[symbol]['ask'] = ask
+                        upbitDict[symbol]['bid'] = bid
+                    except Exception as e:
+                        print(e)
+                self.upbit_data.emit(upbitDict)
             self.mutex.unlock()
 
 class bithumbThread(QThread):
@@ -170,6 +198,18 @@ class bithumbThread(QThread):
         self.mutex = QMutex()
         self.bithumb = pybithumb.Bithumb
         self.bithumbList = list()
+        self.isRun = True
+
+    def delSymbol(self, symbol):
+        if symbol in self.bithumbList:
+            self.bithumbList.remove(symbol)
+
+    def _start(self):
+        self.isRun = True
+        self.start()
+
+    def stop(self):
+        self.isRun = False
 
     def get_symbol_list(self):
         bithumbList = list()
@@ -184,26 +224,27 @@ class bithumbThread(QThread):
         self.bithumbList = list
 
     def run(self):
-        while True:
+        while self.isRun:
             self.mutex.lock()
             bithumbDict = dict()
 
             prices = self.bithumb.get_current_price('ALL')
             orderbooks = self.bithumb.get_orderbook('ALL')['data']
-            for i in self.bithumbList:
-                try:
-                    price = prices[i]['closing_price']
-                    orderbook = orderbooks[i]
-                    ask = orderbook['asks'][0]['price'] + '/' + str(round(float(orderbook['asks'][0]['quantity']), 2))
-                    bid = orderbook['bids'][0]['price'] + '/' + str(round(float(orderbook['bids'][0]['quantity']), 2))
-                    bithumbDict[i] = dict()
-                    bithumbDict[i]['price'] = price
-                    bithumbDict[i]['ask'] = ask
-                    bithumbDict[i]['bid'] = bid
-                except Exception as e:
-                    print(e)
-                    pass
-            self.bithumb_data.emit(bithumbDict)
+            if orderbooks and prices:
+                for i in self.bithumbList:
+                    try:
+                        price = prices[i]['closing_price']
+                        orderbook = orderbooks[i]
+                        ask = orderbook['asks'][0]['price'] + '/' + str(round(float(orderbook['asks'][0]['quantity']), 2))
+                        bid = orderbook['bids'][0]['price'] + '/' + str(round(float(orderbook['bids'][0]['quantity']), 2))
+                        bithumbDict[i] = dict()
+                        bithumbDict[i]['price'] = price
+                        bithumbDict[i]['ask'] = ask
+                        bithumbDict[i]['bid'] = bid
+                    except Exception as e:
+                        print(e)
+                        pass
+                self.bithumb_data.emit(bithumbDict)
             self.mutex.unlock()
 
 if __name__ == "__main__":
