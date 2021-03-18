@@ -15,6 +15,9 @@ class MainWindow(QMainWindow):
         self.upbit = upbitThread()
         self.bithumb = bithumbThread()
 
+        self.dir_path = "cfg"
+        if not os.path.isdir(self.dir_path):
+            os.mkdir(self.dir_path)
         self.list_path = "cfg/coin_list.json"
         self.binance_list = list()
         self.upbit_list = list()
