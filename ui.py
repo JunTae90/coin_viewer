@@ -1,6 +1,21 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
+class ClickableLabel(QLabel):
+    clicked = pyqtSignal()
+    def __init__(self, parent=None):
+        QLabel.__init__(self, parent)
+        self.checked = False
+
+    def mousePressEvent(self, QMouseEvent):
+        self.checked = True
+        self.setStyleSheet("background-color: lightgreen")
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        if self.checked and QMouseEvent.x() >= 0 and QMouseEvent.x() <= self.width() and QMouseEvent.y() >= 0 and QMouseEvent.y() <= self.height():
+            self.clicked.emit()
+        self.checked = False
+        self.setStyleSheet("background-color: rgba(0,0,0,0)")
 
 class CoinOrderBook(QWidget):
     def __init__(self, parent=None, top=False):
@@ -9,7 +24,7 @@ class CoinOrderBook(QWidget):
             self.binanceLabel = QLabel(self)
             self.binanceLabel.setText("바이낸스")
             self.binanceLabel.setAlignment(Qt.AlignCenter)
-            self.upbitLabel = QLabel(self)
+            self.upbitLabel = ClickableLabel(self)
             self.upbitLabel.setText("업비트")
             self.upbitLabel.setAlignment(Qt.AlignCenter)
             self.bithumbLabel = QLabel(self)

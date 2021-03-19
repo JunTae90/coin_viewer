@@ -3,11 +3,12 @@ from PyQt5.QtCore import QTimer
 from PyQt5 import QtCore, QtWidgets
 from thread import *
 
-from ui import MainWidget, CoinWidget
+from ui import *
 
 import os
 import json
 
+from operator import itemgetter
 from debug import debuginfo
 
 class MainWindow(QMainWindow):
@@ -48,8 +49,16 @@ class MainWindow(QMainWindow):
 
         for i in self.widget.findChildren(CoinWidget):
             i.delSignal.connect(self.delSymbol)
+        self.boolSort = False
+        self.sortedList = None
+        sortBtn = self.widget.findChild(ClickableLabel)
+        if sortBtn:
+            sortBtn.clicked.connect(self.sortList)
 
         self.allStart()
+
+    def sortList(self):
+        self.boolSort = True
 
     def delSymbol(self, symbol):
         if symbol != "BTC":
@@ -142,6 +151,7 @@ class MainWindow(QMainWindow):
         self.bithumb_dict = data
 
     def fusion(self):
+
         try:
             fusion_dict = dict()
             for i in self.binance_dict.keys():
@@ -169,19 +179,39 @@ class MainWindow(QMainWindow):
                                 calculated_dict['main_premium'] = calculated_dict['upbit_premium']
                         else:
                             calculated_dict['main_premium'] = calculated_dict['upbit_premium']
+                    else:
+                        calculated_dict['upbit_premium'] = float('inf')
                     fusion_dict[i] = calculated_dict
 
+            if self.boolSort:
+                fusion_list = list()
+                for i in fusion_dict.keys():
+                    data = fusion_dict[i]
+                    fusion_list.append({"symbol":i, "upbit_premium":data["upbit_premium"]})
+                    fusion_list.sort(key=itemgetter("upbit_premium"))
+
+                self.sortedList = list()
+                for j in fusion_list:
+                    self.sortedList.append(j["symbol"])
+
+                self.boolSort = False
+
+            if not self.sortedList:
+                lists = fusion_dict.keys()
+            else:
+                lists = self.sortedList
+
+            for i in range(self.num):
+                widget_name = "coin_widget_{}".format(i)
+                widget = self.findChild(CoinWidget, widget_name)
+                widget.clear()
             cnt = 0
-            for i in fusion_dict.keys():
+            for i in lists:
                 data = fusion_dict[i]
                 widget_name = "coin_widget_{}".format(cnt)
                 widget = self.findChild(CoinWidget, widget_name)
                 widget.setData(i, data)
                 cnt += 1
-            for i in range(cnt, self.num):
-                widget_name = "coin_widget_{}".format(cnt)
-                widget = self.findChild(CoinWidget, widget_name)
-                widget.clear()
 
         except Exception as e:
             debuginfo(e)
