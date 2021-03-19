@@ -145,6 +145,10 @@ class MainWindow(QMainWindow):
         try:
             fusion_dict = dict()
             for i in self.binance_dict.keys():
+                if "ask" not in self.binance_dict[i].keys():
+                    continue
+                if "bid" not in self.binance_dict[i].keys():
+                    continue
                 if (self.binance_dict[i]['ask'] == '0.0/0.0') and (self.binance_dict[i]['bid'] == '0.0/0.0'):
                     continue
                 if (i in self.upbit_dict.keys()) or (i in self.bithumb_dict.keys()):
