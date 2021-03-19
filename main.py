@@ -8,6 +8,8 @@ from ui import MainWidget, CoinWidget
 import os
 import json
 
+from debug import debuginfo
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -178,7 +180,7 @@ class MainWindow(QMainWindow):
                 widget.clear()
 
         except Exception as e:
-            print(e)
+            debuginfo(e)
             pass
 
 

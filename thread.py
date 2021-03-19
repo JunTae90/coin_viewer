@@ -6,6 +6,7 @@ import pybithumb
 import requests
 from bs4 import BeautifulSoup
 
+from debug import debuginfo
 
 class binanceThread(QThread):
     binance_data = pyqtSignal(dict)
@@ -38,7 +39,7 @@ class binanceThread(QThread):
                 if symbol == 'BTCUSDT':
                     binanceList.append(symbol[:-4])
         except Exception as e:
-            print(e)
+            debuginfo(e)
             pass
         return binanceList
 
@@ -65,8 +66,7 @@ class binanceThread(QThread):
                     exchange_rate += i
             self.exchange_rate = float(exchange_rate)
         except Exception as e:
-            # print(e)
-            pass
+            debuginfo(e)
 
     def get_prices(self):
         prices = dict()
@@ -74,7 +74,7 @@ class binanceThread(QThread):
             for i in self.binance.get_all_tickers():
                 prices[i['symbol']] = i['price']
         except Exception as e:
-            print(e)
+            debuginfo(e)
             pass
         return prices
 
@@ -88,7 +88,7 @@ class binanceThread(QThread):
                 orderbooks[i['symbol']]['askPrice'] = i['askPrice']
                 orderbooks[i['symbol']]['askQty'] = i['askQty']
         except Exception as e:
-            print(e)
+            debuginfo(e)
             pass
         return orderbooks
 
@@ -115,7 +115,7 @@ class binanceThread(QThread):
                     round(float(orderbooks['BTCUSDT']['bidQty']), 2))
 
             except Exception as e:
-                print(e)
+                debuginfo(e)
 
             for i in self.binanceList:
                 if i == 'BTCUSDT':
@@ -126,10 +126,8 @@ class binanceThread(QThread):
                     binanceDict[symbol]['price'] = self.calculate_krw(prices[i], BTCUSDT, self.exchange_rate)
                     binanceDict[symbol]['ask'] = self.calculate_krw(orderbooks[i]['askPrice'], BTCUSDT, self.exchange_rate) + '/' + str(round(float(orderbooks[i]['askQty']), 2))
                     binanceDict[symbol]['bid'] = self.calculate_krw(orderbooks[i]['bidPrice'], BTCUSDT, self.exchange_rate) + '/' + str(round(float(orderbooks[i]['bidQty']), 2))
-                    if(symbol == "BTTBTC"):
-                        print(binanceDict)
                 except Exception as e:
-                    print(e)
+                    debuginfo(e)
                     pass
 
             self.binance_data.emit(binanceDict)
@@ -162,7 +160,7 @@ class upbitThread(QThread):
             for i in self.upbit.get_tickers(fiat="KRW"):
                 upbitList.append(i.split('KRW-')[1])
         except Exception as e:
-            print(e)
+            debuginfo(e)
             pass
         return upbitList
 
@@ -188,7 +186,7 @@ class upbitThread(QThread):
                         upbitDict[symbol]['ask'] = ask
                         upbitDict[symbol]['bid'] = bid
                     except Exception as e:
-                        print(e)
+                        debuginfo(e)
                 self.upbit_data.emit(upbitDict)
             self.mutex.unlock()
 
@@ -217,7 +215,7 @@ class bithumbThread(QThread):
         try:
             bithumbList = self.bithumb.get_tickers()
         except Exception as e:
-            print(e)
+            debuginfo(e)
             pass
         return bithumbList
 
@@ -243,7 +241,7 @@ class bithumbThread(QThread):
                         bithumbDict[i]['ask'] = ask
                         bithumbDict[i]['bid'] = bid
                     except Exception as e:
-                        print(e)
+                        debuginfo(e)
                         pass
                 self.bithumb_data.emit(bithumbDict)
             self.mutex.unlock()
