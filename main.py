@@ -224,5 +224,6 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
+    w.resize(1280, 800)
     w.show()
     sys.exit(app.exec_())
