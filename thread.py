@@ -228,8 +228,9 @@ class bithumbThread(QThread):
             bithumbDict = dict()
 
             prices = self.bithumb.get_current_price('ALL')
-            orderbooks = self.bithumb.get_orderbook('ALL')['data']
+            orderbooks = self.bithumb.get_orderbook('ALL')
             if orderbooks and prices:
+                orderbooks = orderbooks['data']
                 for i in self.bithumbList:
                     try:
                         price = prices[i]['closing_price']
