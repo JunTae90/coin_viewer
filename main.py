@@ -72,6 +72,8 @@ class MainWindow(QMainWindow):
                 self.upbit_list.remove(symbol)
             if symbol in self.bithumb_list:
                 self.bithumb_list.remove(symbol)
+            if symbol in self.sortedList:
+                self.sortedList.remove(symbol)
             lists = dict()
             lists["binance"] = self.binance_list
             lists["upbit"] = self.upbit_list
