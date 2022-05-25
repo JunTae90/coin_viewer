@@ -30,7 +30,7 @@ pybithumb==1.0.12
 pycares==3.1.1
 pycparser==2.20
 PyHamcrest==2.0.2
-PyJWT==1.7.1
+PyJWT==2.4.0
 pyOpenSSL==19.1.0
 PyQt5==5.15.0
 PyQt5-sip==12.8.0
