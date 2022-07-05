@@ -27,7 +27,7 @@ pandas==1.0.5
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pybithumb==1.0.12
-pycares==3.1.1
+pycares==4.2.0
 pycparser==2.20
 PyHamcrest==2.0.2
 PyJWT==1.7.1
